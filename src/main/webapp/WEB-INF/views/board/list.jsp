@@ -15,7 +15,7 @@
 	<body>
 		<div class="container">
 			<header>
-				<h1> 게시판</h1>
+				<h1> 게시판_1</h1>
 			</header>
 			<hr />
 			 
