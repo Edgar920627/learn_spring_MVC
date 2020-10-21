@@ -12,5 +12,14 @@
 	                 		   , #{userPass}
 	                 		   , #{userName})
     </insert>
+    
+    
+    <!-- 로그인 -->
+	<select id="login" resultType="kr.co.vo.MemberVO">
+		SELECT USERID, USERPASS 
+		  FROM MP_MEMBER
+		 WHERE USERID = #{userId}
+		   AND USERPASS = #{userPass}   
+	</select>
    
 </mapper>
