@@ -16,8 +16,25 @@
 <a href="/controller/board/list">게시판</a><br />
 <script type="text/javascript">
 	$(document).ready(function(){
+		
+		
 		$("#logoutBtn").on("click", function(){
-			location.href="member/logout";
+			location.href="/controller/member/logout";
+		})
+		
+		$("#registerBtn").on("click", function(){
+			location.href="/controller/member/register";
+		})
+		
+		
+		
+		$("#memberUpdateBtn").on("click", function(){
+			location.href="/controller/member/memberUpdateView";
+		})
+		
+		
+		$("#memberDeleteBtn").on("click", function(){
+			location.href="/controller/member/memberDeleteView";
 		})
 		
 	})
@@ -35,14 +52,14 @@
 			</div>
 			<div>
 				<button type="submit">로그인</button>
-			</div>
-			<div>
-			<a href="/controller/member/register">회원가입</a>
+				<button id="registerBtn" type="button">회원가입</button>
 			</div>
 		</c:if>
 		<c:if test="${member != null }">
 			<div>
 				<p>${member.userId}님 환영 합니다.</p>
+				<button id="memberUpdateBtn" type="button">회원정보수정</button>
+				<button id="memberDeleteBtn" type="button">회원탈퇴</button>
 				<button id="logoutBtn" type="button">로그아웃</button>
 			</div>
 		</c:if>

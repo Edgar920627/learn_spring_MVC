@@ -1,7 +1,7 @@
 package kr.co.controller;
 
 import java.util.List;
-
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.service.BoardService;
@@ -127,16 +129,23 @@ public class BoardController {
 		model.addAttribute("update", service.read(boardVO.getBno()));
 		model.addAttribute("scri", scri);
 
+		List<Map<String, Object>> fileList = service.selectFileList(boardVO.getBno());
+		model.addAttribute("file", fileList);
 		return "board/updateView";
 	}
+	
+	
 
 	// 게시판 수정
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(BoardVO boardVO, @ModelAttribute("scri") SearchCriteria scri, RedirectAttributes rttr)
-			throws Exception {
+	public String update(BoardVO boardVO, 
+						 @ModelAttribute("scri") SearchCriteria scri, 
+						 RedirectAttributes rttr,
+						 @RequestParam(value="fileNoDel[]") String[] files,
+						 @RequestParam(value="fileNameDel[]") String[] fileNames,
+						 MultipartHttpServletRequest mpRequest) throws Exception {
 		logger.info("update");
-
-		service.update(boardVO);
+		service.update(boardVO, files, fileNames, mpRequest);
 
 		rttr.addAttribute("page", scri.getPage());
 		rttr.addAttribute("perPageNum", scri.getPerPageNum());
@@ -145,6 +154,9 @@ public class BoardController {
 
 		return "redirect:/board/list";
 	}
+	
+	
+	
 
 	// 게시판 삭제
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
@@ -152,6 +164,8 @@ public class BoardController {
 			throws Exception {
 		logger.info("delete");
 
+		
+		service.deleteFile(boardVO.getBno());
 		service.delete(boardVO.getBno());
 
 		rttr.addAttribute("page", scri.getPage());
@@ -187,10 +201,11 @@ public class BoardController {
 	}
 
 	// 게시판 글 작성
-	@RequestMapping(value = "/board/write", method = RequestMethod.POST)
-	public String write(BoardVO boardVO) throws Exception {
-		logger.info("board/list");
-		service.write(boardVO);
+	@RequestMapping(value = "/write", method = RequestMethod.POST)
+	public String write(BoardVO boardVO, MultipartHttpServletRequest mpRequest) throws Exception{
+		logger.info("write");
+		service.write(boardVO, mpRequest);
+		
 		return "redirect:/board/list";
 	}
 
@@ -205,7 +220,12 @@ public class BoardController {
 		List<ReplyVO> replyList = replyService.readReply(boardVO.getBno());
 		model.addAttribute("replyList", replyList);
 
+		List<Map<String, Object>> fileList = service.selectFileList(boardVO.getBno());
+		model.addAttribute("file", fileList);
 		return "board/readView";
 	}
 
+	
+	
+	
 }
